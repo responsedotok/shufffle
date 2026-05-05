@@ -1,0 +1,63 @@
+{
+  "name": "@responsedotok/shufffle",
+  "version": "0.1.0",
+  "author": {
+    "name": "responsedotok",
+    "url": "git+https://github.com/responsedotok/shufffle.git"
+  },
+  "description": "A zero-dependency & config-driven reverse proxy for Node.js. Define routes and upstreams in JSON, run it from the CLI, or embed it in your own server.",
+  "keywords": [
+    "reverse-proxy",
+    "nodejs",
+    "shufffle"
+  ],
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "module": "dist/src/index.mjs",
+  "main": "dist/cjs/src/index.js",
+  "types": "dist/src/index.d.ts",
+  "directories": {
+    "src": "src",
+    "test": "test",
+    "scripts": "scripts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/responsedotok/shufffle.git"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/src/index.mjs"
+      },
+      "require": {
+        "types": "./dist/cjs/src/index.d.ts",
+        "default": "./dist/cjs/src/index.js"
+      }
+    }
+  },
+  "bin": {
+    "shufffle": "./dist/src/cli/index.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "dev": "tsc --watch",
+    "lint": "npx biome check --write .",
+    "test": "vitest",
+    "biome": "biome check src && biome format --write src",
+    "prepublishOnly": "npm run build && npm run test",
+    "start": "node dist/src/cli/index.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.14",
+    "@types/node": "25.6.0",
+    "typescript": "6.0.3",
+    "vitest": "4.1.5"
+  }
+}
