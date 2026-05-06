@@ -1,0 +1,10 @@
+export { Config } from './config/config.js';
+export { createProxy, ProxyServer } from './lib/services/proxy/proxy-server.js';
+export type { ConfigType } from './lib/types/config.js';
+export type { Context } from './lib/types/context.js';
+export type { HeaderRules } from './lib/types/header-rules.js';
+export type { Hooks } from './lib/types/hooks.js';
+export { LoadBalancerStrategy } from './lib/types/load-balancer-strategy.js';
+export type { Route } from './lib/types/route.js';
+export type { RouteRewrite } from './lib/types/route-rewrite.js';
+export type { Upstream } from './lib/types/upstream.js';
