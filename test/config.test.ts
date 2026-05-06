@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import fs from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -12,7 +13,8 @@ const validConfig = {
 };
 
 async function writeTempFile(content: string, ext: string): Promise<string> {
-  const filePath = path.join(os.tmpdir(), `proxy-test-${Date.now()}${ext}`);
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'proxy-test-'));
+  const filePath = path.join(dir, `${randomUUID()}${ext}`);
   await fs.writeFile(filePath, content, 'utf-8');
   return filePath;
 }

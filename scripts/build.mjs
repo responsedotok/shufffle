@@ -7,10 +7,11 @@ import path from 'node:path';
 const ROOT = new URL('..', import.meta.url).pathname.replace(/\/$/, '');
 
 /**
- * Execute a shell command asynchronously in root.
+ * Execute a shell command synchronously in the repo root, inheriting
+ * stdio so output streams to the parent process. Throws if the command
+ * exits with a non-zero status.
  *
  * @param cmd The command to execute.
- * @returns The standard output of the command.
  */
 
 export function run(cmd) {
