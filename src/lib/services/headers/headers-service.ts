@@ -45,7 +45,9 @@ export class HeadersService {
     if (this.forwardIp) {
       const existing = headers['x-forwarded-for'];
       const clientIp = req.socket.remoteAddress ?? 'unknown';
-      const existingStr = Array.isArray(existing) ? existing.join(', ') : existing;
+      const existingStr = Array.isArray(existing)
+        ? existing.join(', ')
+        : existing;
       headers['x-forwarded-for'] = existingStr
         ? `${existingStr}, ${clientIp}`
         : clientIp;

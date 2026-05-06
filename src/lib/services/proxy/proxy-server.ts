@@ -33,7 +33,12 @@ export class ProxyServer {
       config.headers,
       config.forwardIp ?? true,
     );
-    this.httpHandler = new HttpHandler(config, hooks, headersService, this.logger);
+    this.httpHandler = new HttpHandler(
+      config,
+      hooks,
+      headersService,
+      this.logger,
+    );
     this.wsHandler = new WebSocketHandler(this.httpHandler, headersService);
 
     this.server = http.createServer((req, res) => {
@@ -100,7 +105,8 @@ export class ProxyServer {
       this.server.listen(port, host, () => {
         this.server.removeListener('error', onError);
         const addr = this.server.address();
-        const boundHost = typeof addr === 'object' && addr ? addr.address : host;
+        const boundHost =
+          typeof addr === 'object' && addr ? addr.address : host;
         const boundPort = typeof addr === 'object' && addr ? addr.port : port;
         this.logger.info(`Listening on ${boundHost}:${boundPort}`);
         resolve();
