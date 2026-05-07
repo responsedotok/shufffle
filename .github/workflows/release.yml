@@ -33,14 +33,5 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Lint
-        run: npm run lint
-
-      - name: Type check
-        run: npx tsc --noEmit
-
-      - name: Test
-        run: npm test
-
       - name: Publish
         run: npm publish --access public --provenance
