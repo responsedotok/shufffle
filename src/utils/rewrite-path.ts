@@ -13,8 +13,13 @@ export function rewritePath(pathname: string, rewrite?: RouteRewrite): string {
 
   let result = pathname;
 
-  if (rewrite.stripPrefix && result.startsWith(rewrite.stripPrefix)) {
-    result = result.slice(rewrite.stripPrefix.length) || '/';
+  if (rewrite.stripPrefix) {
+    const prefix = rewrite.stripPrefix;
+    if (result === prefix) {
+      result = '/';
+    } else if (result.startsWith(prefix) && result[prefix.length] === '/') {
+      result = result.slice(prefix.length);
+    }
   }
 
   if (rewrite.addPrefix) {

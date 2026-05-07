@@ -11,8 +11,9 @@ export function printHelp(): void {
 
     -c, --config <path>      Path to config file (default: ./proxy.config.json)
     -l, --log-level <level>  Log level: debug | info | warn | error | silent (default: info)
-    -e, --env <key=value>    Set environment variables (can be used multiple times, or set .env file in root directory. If you use an .env file,
-                             do not forget to add it to .gitignore so it will not go to version control.)
+    -e, --env <key=value>    Set environment variables (can be used multiple times). Variables already present
+                             in process.env are also honored. .env files are not loaded automatically — use a
+                             loader (e.g. \`node --env-file=.env\`) if you want that behavior.
     -b, --balancer <name>    Load balancer strategy: round-robin | random | weighted (overrides config)
     -h, --help               Show this help message
 

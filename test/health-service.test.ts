@@ -5,6 +5,19 @@ import type { Upstream } from '../src/lib/types/upstream.js';
 
 const upstream: Upstream = { host: '127.0.0.1', port: 9999 };
 
+/**
+ * Bind a TCP listener and immediately close it to obtain a port that
+ * deterministically refuses connections, regardless of CI sandbox
+ * policy on low-numbered ports.
+ */
+async function refusedPort(): Promise<number> {
+  const server = net.createServer();
+  await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
+  const port = (server.address() as net.AddressInfo).port;
+  await new Promise<void>((r) => server.close(() => r()));
+  return port;
+}
+
 describe('HealthService', () => {
   afterEach(() => {
     vi.restoreAllMocks();
@@ -33,8 +46,7 @@ describe('HealthService', () => {
   });
 
   it('marks an upstream as unhealthy when connection is refused', async () => {
-    // Port with nothing listening
-    const u: Upstream = { host: '127.0.0.1', port: 1 };
+    const u: Upstream = { host: '127.0.0.1', port: await refusedPort() };
     const svc = new HealthService([u], 100_000, 1000);
     svc.start();
 
@@ -47,7 +59,7 @@ describe('HealthService', () => {
   it('recovers when an upstream comes back online', async () => {
     // Start with nothing listening — upstream goes unhealthy
     const server = net.createServer();
-    const u: Upstream = { host: '127.0.0.1', port: 1 };
+    const u: Upstream = { host: '127.0.0.1', port: await refusedPort() };
 
     const svc = new HealthService([u], 300, 200);
     svc.start();

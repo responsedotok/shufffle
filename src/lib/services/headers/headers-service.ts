@@ -45,8 +45,11 @@ export class HeadersService {
     if (this.forwardIp) {
       const existing = headers['x-forwarded-for'];
       const clientIp = req.socket.remoteAddress ?? 'unknown';
-      headers['x-forwarded-for'] = existing
-        ? `${existing}, ${clientIp}`
+      const existingStr = Array.isArray(existing)
+        ? existing.join(', ')
+        : existing;
+      headers['x-forwarded-for'] = existingStr
+        ? `${existingStr}, ${clientIp}`
         : clientIp;
       headers['x-forwarded-proto'] ??= (req.socket as { encrypted?: boolean })
         .encrypted

@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import http from 'node:http';
 import https from 'node:https';
+import { Logger } from '../../../logger/logger.js';
 import { matchRoute } from '../../../utils/match-route.js';
 import { rewritePath } from '../../../utils/rewrite-path.js';
 import type { ConfigType } from '../../types/config.js';
@@ -23,12 +24,15 @@ export class HttpHandler {
   private readonly httpsAgent = new https.Agent({ keepAlive: true });
   private readonly healthService: HealthService;
   private readonly headersService: HeadersService;
+  private readonly logger: Logger;
 
   constructor(
     readonly config: ConfigType,
     private readonly hooks: Hooks = {},
     headersService?: HeadersService,
+    logger?: Logger,
   ) {
+    this.logger = logger ?? new Logger();
     this.globalBalancer = createBalancer(
       config.balancer ?? LoadBalancerStrategy.RoundRobin,
     );
@@ -250,8 +254,12 @@ export class HttpHandler {
     if (bodyConsumed) return false;
     const method = (req.method ?? 'GET').toUpperCase();
     if (!RETRY_SAFE_METHODS.has(method)) return false;
-    const cl = req.headers['content-length'];
-    if (cl !== undefined && cl !== '0') return false;
+    const clRaw = req.headers['content-length'];
+    const clStr = Array.isArray(clRaw) ? clRaw[0] : clRaw;
+    if (clStr !== undefined) {
+      const clNum = Number(clStr);
+      if (!Number.isFinite(clNum) || clNum !== 0) return false;
+    }
     if (req.headers['transfer-encoding']) return false;
     return true;
   }
@@ -263,15 +271,12 @@ export class HttpHandler {
 
   getBalancer(route: {
     upstreams: Upstream[];
-    balancer?: string;
+    balancer?: LoadBalancerStrategy;
   }): LoadBalancer {
     if (!route.balancer) return this.globalBalancer;
 
     if (!this.balancers.has(route)) {
-      this.balancers.set(
-        route,
-        createBalancer(route.balancer as LoadBalancerStrategy),
-      );
+      this.balancers.set(route, createBalancer(route.balancer));
     }
     return this.balancers.get(route) ?? this.globalBalancer;
   }
@@ -287,7 +292,9 @@ export class HttpHandler {
     try {
       await this.hooks.onError?.(err, ctx);
     } catch (hookErr) {
-      console.error('hooks.onError threw:', hookErr);
+      this.logger.error('hooks.onError threw', {
+        message: String(hookErr),
+      });
     }
   }
 

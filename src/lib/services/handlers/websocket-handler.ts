@@ -84,10 +84,6 @@ export class WebSocketHandler {
         }
         settled = true;
         if (!connected) {
-          console.error(
-            `502 WebSocket upstream ${upstream.host}:${upstream.port}:`,
-            err.message,
-          );
           this.fail(socket, 502, 'Bad Gateway');
           upstreamSocket.setTimeout(0);
           if (!upstreamSocket.destroyed) upstreamSocket.destroy();
