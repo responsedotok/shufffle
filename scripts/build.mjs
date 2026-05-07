@@ -121,7 +121,7 @@ export function build(dir) {
     fs.rmSync(dir, { recursive: true, force: true });
 
     console.info('\n▶▶▶ ▶▶▶  Building ES modules (tsc -> dist/esm/)...\n');
-    run('npx tsc --project tsconfig.json --outDir dist/esm');
+    run('npx tsc --project tsconfig.build.json --outDir dist/esm');
     esmify(path.join(dir, 'esm'));
 
     // Flatten ESM directory to root of build
