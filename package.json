@@ -40,7 +40,7 @@
     }
   },
   "bin": {
-    "shufffle": "./dist/src/cli/index.mjs"
+    "shufffle": "dist/src/cli/index.mjs"
   },
   "engines": {
     "node": ">=22"
@@ -49,7 +49,7 @@
     "build": "node scripts/build.mjs",
     "dev": "tsc --watch",
     "lint": "npx biome check --write .",
-    "test": "vitest",
+    "test": "vitest run",
     "biome": "biome check src && biome format --write src",
     "prepublishOnly": "npm run build && npm run test",
     "start": "node dist/src/cli/index.mjs"
